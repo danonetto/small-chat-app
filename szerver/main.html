@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="design.css ">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>szerver</title>
+</head>
+<body>
+    <div id="name">
+    <label for="message">add meg a neved</label>
+    <input type="text" id="message">
+    
+    <button id="submit">send</button>
+</div>
+
+
+<div id="main" hidden>
+    <div id="screen"></div>
+    <div><input type="text" id="uzenet"><button id="sendmessage">send</button></div>
+    
+</div>
+
+    <script>
+        const hidden=document.getElementById("name");
+        const main=document.getElementById("main");
+        
+        const ws =new WebSocket('ws://localhost:8082');
+        document.getElementById("submit").addEventListener("click",function(){
+            let id=document.getElementById("message").value;
+            if(id)
+            ws.send(id);
+            document.getElementById("message").value="";
+            hidden.style.display="none";
+            main.style.visibility="visible";
+        });
+        document.getElementById("sendmessage").addEventListener("click",function(){
+            let message=document.getElementById("uzenet").value;
+            ws.send(message);
+            document.getElementById("uzenet").value="";
+            
+        });
+        ws.addEventListener('message', (event) => {
+            const screen=document.getElementById("screen");
+            const szoveg=document.createElement("div");
+            szoveg.textContent=event.data;
+            screen.appendChild(szoveg);
+
+        });
+    </script>
+</body>
+</html>
